@@ -4,6 +4,8 @@ import os
 basedir = os.path.dirname(os.path.abspath(__file__))
 kpath = os.path.join(".", "backup", "secret.key")
 
+# ---------- fernet encryption
+
 def genkey():
     # gen a fernet key and saving to secret.key
 
@@ -63,3 +65,6 @@ if __name__ == "__main__":
     token = lock(sample)
     print("Encrypted: ", token)
     print("Decrypted: ", unlock(token))
+
+
+# ---------- 
