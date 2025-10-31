@@ -1,0 +1,92 @@
+These are my personal notes that I made while learning the concepts for this project. 
+You can read it but you might not understand some things :)
+
+Encryption:
+- hiding the real thing by converting it into gibberish.
+- cannot be converted back without key.
+
+Types:
+
+- symmetric
+    - uses same key for both encryption and decryption
+    - fast
+    - if key leaked: anyone can decrypt
+
+- asymmetric
+    - public key - for encrypting
+    - private key - for decrypting
+    - used in secure communication of internet (SSL/TLS, email encryption)
+    - slow
+
+only symmetric is used in this project
+
+encryption - plaintext to ciphertext using specific algo and key
+decryption - ciphertext to og plaintext using correct key
+
+ex. we interact with ciphertext daily through secure websites (HTTPS), secure messaging apps & password managers :)
+
+ciphertext - can be any form of data and looks like a jumble of random letters, numbers or symbols or even as binary code.
+
+symmetric encryption workflow:
+- secret key is generated  - random bytes
+- plaintext (normal data) is turned into ciphertext (enc data) using a key
+- same key is used to decrypt
+
+Hashing vs Encryption:
+
+- Encryption:
+    - two way (encrpt - decrypt)
+    - store data securely (recoverable)
+    ex -  storing encrpyted passwors
+
+- Decryptions:
+    - one way (only hash)
+    - store passwords (non recoverable)
+    ex - storing password hash for login verification
+
+Fernet:
+it is a symmetric encryption system which is found in python's cryptography library.
+internally it uses AES
+
+- features:
+    - random IV (intialization vector) is used - every enc is unique
+    - MAC (message auth code) is added - checks if data is tempered
+    - expiry time is opt (tokens can expire)
+
+Key:
+random secret bytes value used in both encrption and decryption
+- same key for btoh enc and dec
+- if key lost - data can never be dec
+- if key leaked - anyone can dec
+
+Bytes vs Strings:
+Encryption algos bytes me kaam karte hai, not in Strings
+so always have to convert
+
+- Python
+    string -> bytes : .encode()
+    bytes -> string : .decode()
+
+Base64 encoding:
+ciphertext usually is in binary, storing it in database or json directly is unsafe
+that is why converting it to base64 is good, we get safe printable chars
+
+base64 != encryption
+this is only encoding method (converting to readable format)
+
+Database storage:
+2 ways to store data
+
+- BLOB
+    binary large object - raw bytes can be stored
+
+- TEXT
+    enc data ko base64 string bana kar store karna
+
+- best idea:
+    encrypt - base64 encode - store as TEXT
+
+Key preservation:
+if key is lost in fernet - the enc data is forever lost
+because symmetric enc is only reversible if you have the key
+
