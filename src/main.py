@@ -73,7 +73,7 @@ con, cur = connect_db()
 
 def setp():
     pw = input("Set a master password: ")
-    cur.execute(r"INSERT INTO master (id, master_pass) VALUES (1, %s)", (lock(pw),))
+    cur.execute("INSERT INTO master (id, master_pass) VALUES (1, %s)", (lock(pw),))
     con.commit()
     print(" + Master password set successfully")
 
@@ -93,7 +93,13 @@ def chkmpw():
             return False
         
 
+# ---------- pass manager feaatures
 
+def addp():
+    site = input("Site/App name: ")
+    user = input("Username: ")
+    pw = input("Password: ")
+    cur.excute("INSERT INTO passwords (site, username, password)") VALUES ()
 
     
 
