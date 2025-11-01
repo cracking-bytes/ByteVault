@@ -73,7 +73,7 @@ con, cur = connect_db()
 
 def setp():
     pw = input("Set a master password: ")
-    cur.execute("INSERT INTO master (id, master_pass) VALUES (1, %s)", (lock(pw),))
+    cur.execute(r"INSERT INTO master (id, master_pass) VALUES (1, %s)", (lock(pw),))
     con.commit()
     print(" + Master password set successfully")
 
@@ -99,15 +99,72 @@ def addp():
     site = input("Site/App name: ")
     user = input("Username: ")
     pw = input("Password: ")
-    cur.excute("INSERT INTO passwords (site, username, password)") VALUES ()
+    cur.excute(r"INSERT INTO passwords (site, username, password) VALUES (%s, %s, %s)",
+               (site, user, lock(pw)))
+    con.commit()
+    print(" + Password added successfully")
 
+def viewp():
+    cur.execute("SELECT id, site, username, password FROM passwords")
+    rows = cur.fetchall()
+    for r in rows:
+        print(f"\nID: {r[0]} \nSite: {r[1]} \nUser: {r[2]} \nPassword: {unlock(r[3])}")
+
+def updp():
+    id_ = input('Enter ID to update: ')
+    npw = input("New Password: ")
+    cur.execute(r"UPDATE passwords WHERE id=%s", (lock(npw), id_))
+    con.commit()
+    print("+ Password updated")
+
+def delp():
+    id_ = input("Enter ID to delete: ")
+    cur.execute(r"DELETE FROM passwords WHERE id=%s", (id_,))
+    con.commit()
+    print(" + Password deleted")
+
+
+# ---------- menu
+
+def main():
+    if not chkmpw():
+        return
     
+    while True:
+        print(r'''
+______         _           _   _                _  _   
+| ___ \       | |         | | | |              | || |  
+| |_/ / _   _ | |_   ___  | | | |  __ _  _   _ | || |_ 
+| ___ \| | | || __| / _ \ | | | | / _` || | | || || __|
+| |_/ /| |_| || |_ |  __/ \ \_/ /| (_| || |_| || || |_ 
+\____/  \__, | \__| \___|  \___/  \__,_| \__,_||_| \__|
+         __/ |                                       
+        |___/                                                                     
+''')
+        print('''
+1. Add Password
+2. View Password
+3. Update Password
+4. Delete Password
+5. Exit
+''')
+        
+        ch = input("Enter your choice: ")
+
+        if ch == '1':
+            addp()
+        elif ch == '2':
+            viewp()
+        elif ch == '3':
+            updp()
+        elif ch == '4':
+            delp()
+        elif ch == '5':
+            print("Exiting ByteVault...")
+            break
+        else:
+            print("Invalid choice. Try again!")
 
 if __name__ == "__main__":
-    sample = "MyPassword123"
-    token = lock(sample)
-    print("Encrypted: ", token)
-    print("Decrypted: ", unlock(token))
-
-
-# ---------- 
+    main()
+    con.close()       
