@@ -1,10 +1,12 @@
 from cryptography.fernet import Fernet as fn
 import os
+import mysql.connector as msc
+
+
+# ---------- encryption setup
 
 basedir = os.path.dirname(os.path.abspath(__file__))
 kpath = os.path.join(".", "backup", "secret.key")
-
-# ---------- fernet encryption
 
 def genkey():
     # gen a fernet key and saving to secret.key
@@ -25,39 +27,74 @@ def loadk():
 
     return key
 
-print("key path: ", kpath)
-print("exist: ", os.path.exists(kpath))
+# print("key path: ", kpath)
+# print("exist: ", os.path.exists(kpath))
 
 if not os.path.exists(kpath):
     genkey()
 
-key = loadk()
-fernet = fn(key)
-print(" + Ecryption key loaded")
+# key = loadk()
+# fernet = fn(key)
+# print(" + Ecryption key loaded")
+
+fernet = fn(loadk())
 
 
-def lock(text:str) -> bytes:
-    # enc lock (plaintext) to ciphertext
-
-    data = text.encode()
-    token = fernet.encrypt(data)
-    print(" + Password encrypted")
-    
-    return token
+def lock(text:str) -> bytes:   
+    return fernet.encrypt(text.encode())
 
 def unlock(token:bytes) -> str:
-    # dec unlock ciphertext back to readable
+    return fernet.decrypt(token).decode()
 
+
+# ---------- mysql connection
+
+def connect_db():
     try:
-        data = fernet.decrypt(token)
-        plain = data.decode()
-        print(" + password decrypted")
+        con = msc.connect(
+            host = "localhost",
+            user = "root",
+            password = "",
+            database = "bytevault"
+        )
 
-        return plain
+        cur = con.cursor()
+        print(" + Connected to MySQL")
+        return con, cur
     
     except Exception as e:
-        print("Decryption failed :( ", e)
-        return None
+        print(" - Database connection failed", e)
+        exit()
+
+con, cur = connect_db()
+
+
+# ---------- master password
+
+def setp():
+    pw = input("Set a master password: ")
+    cur.execute(r"INSERT INTO master (id, master_pass) VALUES (1, %s)", (lock(pw),))
+    con.commit()
+    print(" + Master password set successfully")
+
+def chkmpw():
+    cur.execute("SELECT master_pass FROM master WHERE id=1")
+    result = cur.fetchone()
+    if not result:
+        setp()
+        return True
+    else:
+        pw = input("Enter master password: ")
+        if unlock(result[0]) == pw:
+            print(" + Access granted")
+            return True
+        else:
+            print("Access denied")
+            return False
+        
+
+
+
     
 
 if __name__ == "__main__":
