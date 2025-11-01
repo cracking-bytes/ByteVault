@@ -3,10 +3,12 @@ from mysql.connector import Error
 
 def connect_db():
     try:
+        pw = input("Enter MySQL password for connecting: ")
+
         con = msc.connect(
             host = "localhost",
             user = "root",
-            password = input("Enter MySQL password for connecting: ") 
+            password = pw 
             )
 
         if con.is_connected():
@@ -22,7 +24,7 @@ def connect_db():
         con = msc.connect(
             host = "localhost",
             user = "root",
-            password = input("Enter MySQL password for connecting: "),
+            password = pw,
             database = "bytevault"
         )
 
