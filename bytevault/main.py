@@ -1,6 +1,6 @@
-from cryptography.fernet import Fernet as fn
 import os
 import mysql.connector as msc
+from cryptography.fernet import Fernet as fn
 
 
 # colours
@@ -20,8 +20,11 @@ class c:
 
 # ---------- encryption setup
 
-basedir = os.path.dirname(os.path.abspath(__file__))
-kpath = os.path.join(".", "backup", "secret.key")
+home_dir = os.path.expanduser("~")
+backup_dir = os.path.join(home_dir, ".bytevault")
+os.makedirs(backup_dir, exist_ok=True)
+
+kpath = os.path.join(backup_dir, "secret.key")
 
 def genkey():
     # gen a fernet key and saving to secret.key
@@ -149,8 +152,8 @@ def main():
     if not chkmpw():
         return
     
-    while True:
-        print(c.B + r'''
+
+    print(c.B + r'''
 ______         _           _   _                _  _   
 | ___ \       | |         | | | |              | || |  
 | |_/ / _   _ | |_   ___  | | | |  __ _  _   _ | || |_ 
@@ -160,7 +163,9 @@ ______         _           _   _                _  _
          __/ |                                       
         |___/                                                                     
 ''' + c.E)
-        
+    
+
+    while True:
         print(c.Y + '''
 1. Add Password
 2. View Password
@@ -169,21 +174,22 @@ ______         _           _   _                _  _
 5. Exit
 ''' + c.E)
         
-        ch = input(c.P + "Enter your choice: " + c.E)
-
-        if ch == '1':
-            addp()
-        elif ch == '2':
-            viewp()
-        elif ch == '3':
-            updp()
-        elif ch == '4':
-            delp()
-        elif ch == '5':
-            print(c.G + "Exiting ByteVault..." + c.E)
-            break
-        else:
+        ch = input(c.P + "Enter your choice: " + c.E) 
+        if ch == '1': 
+            addp() 
+        elif ch == '2': 
+            viewp() 
+        elif ch == '3': 
+            updp() 
+        elif ch == '4': 
+            delp() 
+        elif ch == '5': 
+            print(c.G + "Exiting ByteVault..." + c.E) 
+            break 
+        else: 
             print(c.R + "\n! Invalid choice. Try again! !" + c.E)
+        
+
 
 if __name__ == "__main__":
     main()

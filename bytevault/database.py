@@ -35,22 +35,29 @@ def connect_db():
         return None
     
 
-def setup_table(con):
+def setup_tables(con):
     try:
         cursor = con.cursor()
-        query = """
-        CREATE TABLE IF NOT EXISTS vault (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            service VARCHAR(100) NOT NULL,
-            username VARCHAR(100) NOT NULL,
-            password TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+        master = """
+        CREATE TABLE IF NOT EXISTS master (
+            id INT PRIMARY KEY,
+            master_pass BLOB NOT NULL
         ); """
 
-        cursor.execute(query)
+        passwords = """
+        CREATE TABLE IF NOT EXISTS passwords (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            site VARCHAR(255) NOT NULL,
+            username VARCHAR(255) NOT NULL,
+            password BLOB NOT NULL
+        ); """
+
+        cursor.execute(master)
+        cursor.execute(passwords)
         con.commit()
         cursor.close()
-        print("Table 'vault' ok")
+        print("Table created successfully")
 
     except Error as e:
         print("Table creation error: ", e)
@@ -59,6 +66,6 @@ def setup_table(con):
 if __name__ == "__main__":
     conn = connect_db()
     if conn:
-        setup_table(conn)
+        setup_tables(conn)
         conn.close()
         print("Database setup complete")

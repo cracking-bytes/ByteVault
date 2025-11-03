@@ -48,6 +48,19 @@ The passwords will look gibberish, it's encrypted.
 
 ## Installation & Usage
 
+### Quick Install and Setup
+
+#### PIP Installation
+
+```bash
+pip install bytevault
+```
+> Make sure to Setup database using [this](src/database.py).
+
+---
+
+### Custom Install and Setup
+
 #### Clone the repository
 
 ```bash
